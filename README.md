@@ -14,7 +14,6 @@
   </p>
 </div>
 
-> Renamed from `meaning` (see [`docs/2026-07-03-defossilize-plugin-design.md`](docs/2026-07-03-defossilize-plugin-design.md) §14). The top-level directory rename `meaning/` → `defossilize/` is user-managed (git); the plugin `name` in `plugin.json` is `defossilize` regardless.
 
 ## About
 
@@ -22,19 +21,18 @@ Code doesn't sit at two poles ("I fully understand it" versus "legacy black box"
 
 ## Installation
 
-> The plugin is not yet on a public marketplace. The bundled [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) defines a local-testing marketplace (`f2077-local`) you can add directly.
+Available via the `f2077` marketplace on GitHub.
 
-**1. Clone the repo somewhere stable:**
-
-```bash
-git clone https://github.com/F2077/defossilize.git
-```
-
-**2. In Claude Code, add the local marketplace and install:**
+**1. Add the marketplace in Claude Code:**
 
 ```
-/plugin marketplace add /absolute/path/to/defossilize
-/plugin install defossilize@f2077-local
+/plugin marketplace add F2077/defossilize
+```
+
+**2. Install the plugin:**
+
+```
+/plugin install defossilize@f2077
 ```
 
 Then run any command as `/defossilize:<command>` — e.g. `/defossilize:preserve`.

@@ -1,9 +1,9 @@
 {
-  "name": "f2077-local",
+  "name": "f2077",
   "owner": {
     "name": "F2077"
   },
-  "description": "Local testing marketplace for the defossilize plugin (not published).",
+  "description": "Marketplace for the defossilize plugin.",
   "plugins": [
     {
       "name": "defossilize",
