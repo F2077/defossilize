@@ -1,7 +1,8 @@
 {
   "name": "defossilize",
   "version": "0.1.0",
-  "description": "Turn fossil code back into living understanding — reduce intent debt and cognitive debt across the fossilization spectrum (preserve / thaw / excavate / revive / curate).",
+  "description": "Turn fossil code back into understanding. Reduces intent debt and cognitive debt across the fossilization spectrum (preserve, thaw, excavate, revive, curate).",
+  "author": {"name": "F2077"},
   "keywords": ["comprehension", "cognitive-debt", "intent-debt", "legacy", "program-comprehension", "documentation"],
   "license": "MIT"
 }
