@@ -1,0 +1,22 @@
+{
+  "name": "f2077",
+  "owner": {
+    "name": "F2077"
+  },
+  "description": "Marketplace for the defossilize plugin.",
+  "plugins": [
+    {
+      "name": "defossilize",
+      "source": "./",
+      "description": "Turn fossil code back into living understanding — reduce intent debt and cognitive debt across the fossilization spectrum (preserve / thaw / excavate / revive / curate).",
+      "keywords": [
+        "comprehension",
+        "cognitive-debt",
+        "intent-debt",
+        "legacy",
+        "program-comprehension",
+        "documentation"
+      ]
+    }
+  ]
+}
