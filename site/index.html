@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>defossilize — Turn fossil code back into understanding</title>
+<meta name="description" content="A Claude Code plugin that reduces intent debt and cognitive debt. It walks fossilized code back to life, one stratum at a time, while the theory still lives in your head.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%235C1A1B' stroke-width='3'%3E%3Ccircle cx='50' cy='50' r='40'/%3E%3Ccircle cx='50' cy='50' r='28'/%3E%3Ccircle cx='50' cy='50' r='17'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='7' fill='%235C1A1B'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ===== Preface: this stylesheet is laid out as a printed monograph ===== */
+/* Strata, by depth from the surface:                                   */
+/*   bone  #EFE6D2  — surface sediment, the page itself                 */
+/*   ash   #C9BF9D  — loess band, section rules                         */
+/*   ochre #A6702F  — mineral vein, links & accents                      */
+/*   oxblood #5C1A1B — deep stratum, headings                           */
+/*   verdigris #3E8A7A — oxidized copper, motion                         */
+/*   ink   #2A1F17  — bedrock, body text                                 */
+/* ===================================================================== */
+
+:root {
+  --bone:        #EFE6D2;
+  --bone-deep:   #E5DAC0;
+  --ash:         #C9BF9D;
+  --ochre:       #A6702F;
+  --ochre-soft:  #BC8642;
+  --oxblood:     #5C1A1B;
+  --oxblood-dim: #7A2E2F;
+  --verdigris:   #3E8A7A;
+  --verdigris-dim:#2F6B5C;
+  --ink:         #2A1F17;
+  --ink-soft:    #5A4A39;
+  --vellum-shadow: rgba(42, 31, 23, 0.08);
+
+  --serif-display: "EB Garamond", "Hoefler Text", Georgia, serif;
+  --serif-text:    "Crimson Text", "EB Garamond", Georgia, serif;
+  --mono:          "IBM Plex Mono", "Courier New", monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bone);
+  color: var(--ink);
+  font-family: var(--serif-text);
+  font-size: 19px;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  /* pulp-paper grain: two layered radial gradients at low opacity,      */
+  /* giving an uneven hand-batched darkness rather than a flat fill.     */
+  background-image:
+    radial-gradient(ellipse 80% 60% at 15% 20%, rgba(166, 112, 47, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 85% 80%, rgba(92, 26, 27, 0.04) 0%, transparent 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0.42  0 0 0 0 0.31  0 0 0 0 0.2  0 0 0 0.06 0'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>");
+  background-attachment: fixed, fixed, fixed;
+}
+
+::selection {
+  background: var(--ochre);
+  color: var(--bone);
+}
+
+/* ==== Folio: the bound-page container ==== */
+.folio {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+}
+
+/* page edges — a thin ash rule like the edge of a printed sheet          */
+.folio::before, .folio::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--ash) 8%, var(--ash) 92%, transparent);
+  opacity: 0.5;
+}
+.folio::before { left: 28px; }
+.folio::after  { right: 28px; }
+
+/* ==== Marginalia: left margin rail ==== */
+.rail {
+  position: fixed;
+  left: 14px;
+  top: 0;
+  bottom: 0;
+  width: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+}
+.rail-mark {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0.55;
+}
+.rail-mark + .rail-mark { margin-top: 18px; }
+
+/* ==== BBeside topbar ==== */
+.crest {
+  position: relative;
+  padding: 28px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.crest .crest-l, .crest .crest-r { display: flex; gap: 22px; }
+.crest a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px dotted transparent;
+  transition: border-color .2s, color .2s;
+}
+.crest a:hover { color: var(--oxblood); border-color: var(--oxblood); }
+.crest .sep { color: var(--ash); }
+
+/* ==== Frontispiece ==== */
+.frontispiece {
+  padding: 92px 0 64px;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 64px;
+  align-items: center;
+  position: relative;
+}
+
+.ammonite {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  aspect-ratio: 1;
+  margin-left: auto;
+  filter: drop-shadow(0 18px 30px rgba(92, 26, 27, 0.18)) drop-shadow(0 2px 4px rgba(42,31,23,0.12));
+  animation: settle 1.2s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes settle {
+  from { opacity: 0; transform: translateY(14px) rotate(-2.5deg) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) rotate(-1.5deg) scale(1); }
+}
+.ammonite svg { width: 100%; height: 100%; display: block; }
+
+.frontispiece .copy { max-width: 520px; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--ochre);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: rise .9s .1s cubic-bezier(.2,.7,.2,1) both;
+}
+.eyebrow::before, .eyebrow::after {
+  content: "";
+  height: 1px;
+  background: var(--ochre);
+  flex: 0 0 28px;
+  opacity: 0.5;
+}
+.eyebrow::after { flex: 1; }
+
+h1.title {
+  font-family: var(--serif-display);
+  font-weight: 600;
+  font-size: clamp(64px, 8vw, 132px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  color: var(--oxblood);
+  margin-bottom: 22px;
+  animation: rise .9s .18s cubic-bezier(.2,.7,.2,1) both;
+}
+h1.title .stress {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--ochre);
+}
+
+.lede {
+  font-family: var(--serif-text);
+  font-size: clamp(21px, 2.1vw, 27px);
+  line-height: 1.42;
+  font-style: italic;
+  color: var(--ink);
+  max-width: 32ch;
+  margin-bottom: 30px;
+  animation: rise .9s .28s cubic-bezier(.2,.7,.2,1) both;
+}
+
+.byline {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 42px;
+  animation: rise .9s .38s cubic-bezier(.2,.7,.2,1) both;
+}
+.byline .dot { color: var(--ochre); margin: 0 10px; }
+
+.actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+  animation: rise .9s .48s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.btn {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 26px;
+  border: 1px solid var(--oxblood);
+  background: var(--oxblood);
+  color: var(--bone);
+  cursor: pointer;
+  transition: background .25s, color .25s, transform .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn:hover { background: var(--oxblood-dim); transform: translateY(-1px); }
+.btn .chev { transition: transform .25s; }
+.btn:hover .chev { transform: translateX(4px); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--oxblood);
+  border-color: var(--ash);
+}
+.btn-ghost:hover { background: transparent; color: var(--ochre); border-color: var(--ochre); }
+
+.install-block {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.install-line {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+.install-line code {
+  background: var(--bone-deep);
+  border: 1px solid var(--ash);
+  padding: 3px 8px;
+  color: var(--oxblood);
+  font-family: var(--mono);
+}
+
+/* ==== Section primitives ==== */
+section {
+  padding: 92px 0;
+  position: relative;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 22px;
+  margin-bottom: 8px;
+}
+.section-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--ochre);
+  border: 1px solid var(--ochre);
+  padding: 4px 10px;
+  flex-shrink: 0;
+  align-self: center;
+}
+.section-head h2 {
+  font-family: var(--serif-display);
+  font-weight: 600;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  color: var(--oxblood);
+}
+.section-sub {
+  font-family: var(--serif-text);
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 20px;
+  margin: 14px 0 56px 0;
+  max-width: 60ch;
+  padding-left: 60px;
+  border-left: 2px solid var(--ochre);
+}
+
+/* ==== Plate I: the spectrum ==== */
+.plate {
+  background: var(--bone-deep);
+  border: 1px solid var(--ash);
+  position: relative;
+  margin-top: 16px;
+}
+.plate-caption {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 10px 18px 12px;
+  border-top: 1px solid var(--ash);
+  display: flex;
+  justify-content: space-between;
+  background: linear-gradient(to right, var(--bone-deep), var(--bone));
+}
+.plate-caption em { font-style: italic; text-transform: none; letter-spacing: 0.06em; color: var(--ochre); }
+
+.spectrum {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+.stratum {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px 22px 30px;
+  border-right: 1px solid var(--ash);
+  transition: transform .4s cubic-bezier(.2,.7,.2,1);
+}
+.stratum:last-child { border-right: none; }
+.stratum:hover { transform: translateY(-6px); }
+
+.stratum .depth {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--ink-soft);
+  margin-bottom: auto;
+}
+.stratum .name {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+.stratum .gloss {
+  font-family: var(--serif-text);
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.stratum::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  z-index: -1;
+}
+.stratum.s1 { background: linear-gradient(180deg, transparent 0%, rgba(62, 138, 122, 0.18) 70%, rgba(62, 138, 122, 0.32) 100%); }
+.stratum.s2 { background: linear-gradient(180deg, transparent 0%, rgba(166, 112, 47, 0.16) 65%, rgba(166, 112, 47, 0.3) 100%); }
+.stratum.s3 { background: linear-gradient(180deg, transparent 0%, rgba(166, 112, 47, 0.26) 55%, rgba(166, 112, 47, 0.42) 100%); }
+.stratum.s4 { background: linear-gradient(180deg, transparent 0%, rgba(92, 26, 27, 0.18) 60%, rgba(92, 26, 27, 0.34) 100%); }
+.stratum.s5 { background: linear-gradient(180deg, transparent 0%, rgba(42, 31, 23, 0.32) 50%, rgba(42, 31, 23, 0.55) 100%); }
+.stratum.s5 .name, .stratum.s5 .gloss { color: var(--bone); }
+.stratum.s5 .depth { color: rgba(239, 230, 210, 0.65); }
+
+.spectrum-marker {
+  position: absolute;
+  top: 0;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ochre);
+  background: var(--bone);
+  padding: 2px 8px;
+  border: 1px solid var(--ochre);
+}
+
+/* ==== Plate II: lifecycle as a stratigraphic column ==== */
+.column-wrap {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 0;
+  margin-top: 16px;
+  border: 1px solid var(--ash);
+  background: var(--bone-deep);
+}
+.depth-axis {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 0 28px 14px;
+  border-right: 1px solid var(--ash);
+  background: linear-gradient(180deg, var(--bone-deep), var(--ash) 50%, var(--ink) 100%);
+}
+.depth-tick {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+  position: relative;
+}
+.depth-tick::before {
+  content: "";
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  width: 10px;
+  height: 1px;
+  background: var(--ink-soft);
+}
+.depth-axis::after {
+  content: "← deeper";
+  position: absolute;
+  bottom: 8px;
+  left: 14px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--bone);
+  opacity: 0.7;
+}
+
+.column-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.cmd {
+  padding: 36px 44px;
+  border-bottom: 1px solid var(--ash);
+  display: grid;
+  grid-template-columns: 200px 1fr 220px;
+  gap: 36px;
+  align-items: start;
+  position: relative;
+  transition: background .3s;
+}
+.cmd:last-child { border-bottom: none; }
+.cmd:hover { background: rgba(239, 230, 210, 0.5); }
+.cmd::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 36px;
+  bottom: 36px;
+  width: 3px;
+  background: var(--cmd-tint, var(--ochre));
+  opacity: 0;
+  transition: opacity .3s;
+}
+.cmd:hover::before { opacity: 1; }
+
+.cmd.alive   { --cmd-tint: var(--verdigris); }
+.cmd.half    { --cmd-tint: var(--ochre-soft); }
+.cmd.dig     { --cmd-tint: var(--ochre); }
+.cmd.revive  { --cmd-tint: var(--oxblood-dim); }
+.cmd.curate  { --cmd-tint: var(--verdigris-dim); }
+
+.cmd-stage {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--cmd-tint, var(--ochre));
+  margin-bottom: 12px;
+}
+.cmd-name {
+  font-family: var(--serif-display);
+  font-weight: 600;
+  font-style: italic;
+  font-size: 42px;
+  line-height: 1;
+  color: var(--oxblood);
+  letter-spacing: -0.01em;
+}
+.cmd-slash {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  margin-top: 10px;
+}
+.cmd-slash code { color: var(--oxblood); font-family: var(--mono); }
+
+.cmd-body p {
+  font-family: var(--serif-text);
+  font-size: 18px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.cmd-body p + p { margin-top: 14px; }
+.cmd-body .em { font-style: italic; color: var(--oxblood); color: var(--cmd-tint, var(--ochre)); }
+
+.cmd-signs {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  letter-spacing: 0.02em;
+  padding-left: 18px;
+  border-left: 1px solid var(--ash);
+}
+.cmd-signs .label {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 9.5px;
+  color: var(--ochre);
+  margin-bottom: 6px;
+}
+.cmd-signs li { list-style: none; padding-left: 14px; position: relative; }
+.cmd-signs li::before { content: "·"; position: absolute; left: 2px; color: var(--ochre); }
+
+/* ==== Plate III: theory ==== */
+.duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  margin-top: 16px;
+}
+.essay p { font-size: 19px; line-height: 1.62; margin-bottom: 18px; }
+.essay p:first-of-type::first-letter {
+  font-family: var(--serif-display);
+  font-weight: 600;
+  font-size: 60px;
+  float: left;
+  line-height: 0.85;
+  padding: 6px 10px 0 0;
+  color: var(--oxblood);
+}
+.essay .term { font-style: italic; color: var(--ochre); }
+.essay .src { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); letter-spacing: 0.06em; }
+
+.triangle {
+  position: relative;
+  padding: 32px;
+  border: 1px solid var(--ash);
+  background: linear-gradient(135deg, var(--bone-deep), var(--bone));
+}
+.triangle svg { width: 100%; height: auto; display: block; }
+.triangle-caption {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 18px;
+  text-align: center;
+}
+.triangle-caption em { color: var(--ochre); font-style: italic; text-transform: none; letter-spacing: 0.04em; }
+
+/* ==== Plate IV: install ==== */
+.install-plate {
+  border: 1px solid var(--ash);
+  background: var(--ink);
+  color: var(--bone);
+  margin-top: 16px;
+}
+.install-bar {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(239, 230, 210, 0.55);
+  padding: 10px 22px;
+  border-bottom: 1px solid rgba(201, 191, 157, 0.2);
+  display: flex;
+  justify-content: space-between;
+}
+.install-bar .dots { letter-spacing: 0.5em; }
+.install-body {
+  padding: 28px 30px 34px;
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.85;
+  white-space: pre;
+  overflow-x: auto;
+}
+.install-body .prompt { color: var(--ochre); user-select: none; }
+.install-body .cmd-text { color: var(--bone); }
+.install-body .comment { color: rgba(239, 230, 210, 0.4); font-style: italic; }
+.install-body .out { color: var(--verdigris); }
+
+.install-notes {
+  margin-top: 24px;
+  font-family: var(--serif-text);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.install-notes code {
+  font-family: var(--mono);
+  font-size: 14px;
+  background: var(--bone-deep);
+  border: 1px solid var(--ash);
+  padding: 2px 6px;
+  color: var(--oxblood);
+}
+
+/* ==== Colophon / footer ==== */
+.colophon {
+  margin-top: 40px;
+  padding: 56px 0 72px;
+  border-top: 1px solid var(--ash);
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 48px;
+}
+.colophon h3 {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ochre);
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+.colophon p, .colophon li {
+  font-family: var(--serif-text);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.colophon ul { list-style: none; }
+.colophon a {
+  color: var(--oxblood);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--ash);
+  transition: border-color .2s;
+}
+.colophon a:hover { border-color: var(--ochre); }
+
+.colophon-imprint {
+  grid-column: 1 / -1;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ash);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.colophon-imprint .ammonite-glyph {
+  width: 28px; height: 28px;
+  opacity: 0.5;
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 960px) {
+  .frontispiece { grid-template-columns: 1fr; gap: 40px; padding: 64px 0 40px; }
+  .ammonite { max-width: 240px; margin: 0 auto; }
+  .duo { grid-template-columns: 1fr; gap: 40px; }
+  .spectrum { grid-template-columns: 1fr 1fr; height: auto; }
+  .stratum { border-right: none; border-bottom: 1px solid var(--ash); min-height: 140px; }
+  .column-wrap { grid-template-columns: 56px 1fr; }
+  .cmd { grid-template-columns: 1fr; gap: 18px; padding: 28px 24px; }
+  .cmd-signs { padding-left: 0; border-left: none; border-top: 1px solid var(--ash); padding-top: 14px; }
+  .colophon { grid-template-columns: 1fr; gap: 32px; }
+  .section-sub { padding-left: 0; }
+  .rail { display: none; }
+  .folio::before, .folio::after { display: none; }
+  .crest { flex-direction: column; gap: 10px; align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- left margin rail -->
+<aside class="rail" aria-hidden="true">
+  <span class="rail-mark">defossilize · v0.1.0</span>
+  <span class="rail-mark">field monograph</span>
+  <span class="rail-mark">MIT</span>
+</aside>
+
+<div class="folio">
+
+  <!-- ===== Crest ===== -->
+  <header class="crest">
+    <div class="crest-l">
+      <span>F2077 / defossilize</span>
+      <span class="sep">·</span>
+      <span>a Claude Code plugin</span>
+    </div>
+    <div class="crest-r">
+      <a href="#lifecycle">Lifecycle</a>
+      <span class="sep">·</span>
+      <a href="#theory">Theory</a>
+      <span class="sep">·</span>
+      <a href="#install">Install</a>
+      <span class="sep">·</span>
+      <a href="https://github.com/F2077/defossilize" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </header>
+
+  <!-- ===== Frontispiece ===== -->
+  <section class="frontispiece">
+
+    <div class="copy">
+      <div class="eyebrow">Field Monograph · v0.1.0</div>
+      <h1 class="title">defossilize<span class="stress">.</span></h1>
+      <p class="lede">Turn fossil code back into <em>understanding</em> — while the theory still lives in your head, or after it has gone.</p>
+      <p class="byline">A Claude Code plugin <span class="dot">·</span> reduces intent debt &amp; cognitive debt <span class="dot">·</span> MIT</p>
+
+      <div class="actions">
+        <a class="btn" href="#install">
+          <span>Begin a dig</span>
+          <span class="chev">→</span>
+        </a>
+        <span class="install-line"><code>/plugin install defossilize@f2077</code></span>
+      </div>
+    </div>
+
+    <!-- Ammonite — a single coal-age specimen, drawn as inline SVG so it renders crisp -->
+    <figure class="ammonite" aria-label="Ammonite spiral, the project mark">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="shellBody" cx="42%" cy="40%" r="62%">
+            <stop offset="0%"  stop-color="#D9A468"/>
+            <stop offset="38%" stop-color="#A6702F"/>
+            <stop offset="72%" stop-color="#7A4A1C"/>
+            <stop offset="100%" stop-color="#3A2410"/>
+          </radialGradient>
+          <radialGradient id="chamber" cx="50%" cy="50%" r="60%">
+            <stop offset="0%"  stop-color="#2A1F17"/>
+            <stop offset="100%" stop-color="#4A3520"/>
+          </radialGradient>
+          <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence baseFrequency="0.9" numOctaves="2" seed="7"/>
+            <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0"/>
+            <feComposite operator="in" in2="SourceGraphic"/>
+          </filter>
+        </defs>
+
+        <!-- main spiral body -->
+        <g transform="translate(200 205)">
+          <!-- outermost whorl -->
+          <path d="M 0 0
+                   m -168 0
+                   a 168 168 0 1 0 336 0
+                   a 168 168 0 1 0 -282 -50"
+                fill="url(#shellBody)" stroke="#3A2410" stroke-width="2"/>
+
+          <!-- successive whorls -->
+          <path d="M 0 0 m -130 0 a 130 130 0 1 0 252 18 a 130 130 0 1 0 -210 -38"
+                fill="#9E6826" stroke="#3A2410" stroke-width="1.5"/>
+          <path d="M 0 0 m -95 0 a 95 95 0 1 0 178 24 a 95 95 0 1 0 -148 -30"
+                fill="#8B5A22" stroke="#3A2410" stroke-width="1.5"/>
+          <path d="M 0 0 m -62 0 a 62 62 0 1 0 116 26 a 62 62 0 1 0 -94 -28"
+                fill="#7A4A1C" stroke="#3A2410" stroke-width="1.5"/>
+          <path d="M 0 0 m -34 0 a 34 34 0 1 0 62 16 a 34 34 0 1 0 -50 -18"
+                fill="#5C3614" stroke="#3A2410" stroke-width="1.5"/>
+
+          <!-- suture lines — the zigzag ribs that mark chamber boundaries -->
+          <g stroke="#2A1A08" stroke-width="1.2" fill="none" opacity="0.7">
+            <path d="M -160 -30 Q -150 -45 -135 -38 T -110 -42"/>
+            <path d="M -158  40 Q -148  52 -134  46 T -108  50"/>
+            <path d="M  120  70 Q  132  58  146  64 T  168  60"/>
+            <path d="M  148 -64 Q  158 -76  172 -68 T  190 -72"/>
+            <path d="M -40 -118 Q -28 -132 -14 -124 T  12 -128"/>
+          </g>
+
+          <!-- chamber openings along the outer rim -->
+          <circle cx="-138" cy="-92" r="9" fill="url(#chamber)"/>
+          <circle cx="118"  cy="-114" r="8" fill="url(#chamber)"/>
+          <circle cx="148"  cy="78"  r="8" fill="url(#chamber)"/>
+          <circle cx="-104" cy="138" r="7" fill="url(#chamber)"/>
+          <circle cx="-160" cy="40"  r="6" fill="url(#chamber)"/>
+
+          <!-- the living chamber — final, largest -->
+          <path d="M 0 0 m -168 0 a 168 168 0 0 1 130 -78 q 30 10 38 24"
+                fill="#B8792E" stroke="#3A2410" stroke-width="2" opacity="0.92"/>
+
+          <!-- aperture -->
+          <path d="M 28 -150 q 18 -8 30 6 q 8 12 -4 22 q -16 6 -28 -6 z"
+                fill="#3A2410" stroke="#1A0F05" stroke-width="1.5"/>
+
+          <!-- nucleolus center -->
+          <circle cx="0" cy="0" r="14" fill="#2A1A08"/>
+          <circle cx="-2" cy="-2" r="5" fill="#5C3614"/>
+
+          <!-- ribs running across the outer whorl -->
+          <g stroke="#3A2410" stroke-width="1.4" opacity="0.55">
+            <line x1="-165" y1="-20" x2="-150" y2="-15"/>
+            <line x1="-150" y1="-80" x2="-138" y2="-72"/>
+            <line x1="-95"  y1="-138" x2="-86" y2="-128"/>
+            <line x1="-20"  y1="-168" x2="-18" y2="-152"/>
+            <line x1="60"   y1="-160" x2="54"  y2="-144"/>
+            <line x1="130"  y1="-108" x2="118" y2="-100"/>
+            <line x1="168"  y1="-20"  x2="152" y2="-18"/>
+            <line x1="150"  y1="78"   x2="136" y2="72"/>
+            <line x1="80"   y1="150"  x2="72"  y2="136"/>
+            <line x1="-30"  y1="166"  x2="-26" y2="150"/>
+            <line x1="-120" y1="120"  x2="-108" y2="108"/>
+          </g>
+        </g>
+
+        <!-- grain over everything -->
+        <rect width="400" height="400" filter="url(#rough)" opacity="0.6"/>
+      </svg>
+    </figure>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Plate I — the spectrum of fossilization                     -->
+  <!-- ============================================================ -->
+  <section id="spectrum-section">
+    <div class="section-head">
+      <span class="section-num">Plate I</span>
+      <h2>Code does not sit at two poles.</h2>
+    </div>
+    <p class="section-sub">It degrades along a continuous spectrum, from the feature you just shipped to the black box you inherited. <span style="color:var(--oxblood)">defossilize</span> walks it back to life — one stratum at a time.</p>
+
+    <figure class="plate">
+      <div class="spectrum">
+        <div class="spectrum-marker" style="left: 18%;">surface · you wrote it, you remember</div>
+
+        <div class="stratum s1">
+          <span class="depth">0 m · alive</span>
+          <span class="name">Alive</span>
+          <span class="gloss">The theory still lives in your head. Pin the why while it’s fresh.</span>
+        </div>
+        <div class="stratum s2">
+          <span class="depth">~6 m · half-fossil</span>
+          <span class="name">Half-fossil</span>
+          <span class="gloss">You wrote it. You can’t quite read it anymore. Rebuild the theory from its signs.</span>
+        </div>
+        <div class="stratum s3">
+          <span class="depth">~30 m · petrified</span>
+          <span class="name">Petrified</span>
+          <span class="gloss">Inherited, or AI-generated. The theory never lived in your head at all.</span>
+        </div>
+        <div class="stratum s4">
+          <span class="depth">~80 m · dug</span>
+          <span class="name">Mapped</span>
+          <span class="gloss">The thin spots are found. One hotspot is chosen for revival.</span>
+        </div>
+        <div class="stratum s5">
+          <span class="depth">bedrock · revived</span>
+          <span class="name">Revived</span>
+          <span class="gloss">Predict → reveal → reconcile. What holds, holds. What’s lost, marked <em>unknown</em>.</span>
+        </div>
+      </div>
+      <figcaption class="plate-caption">
+        <span>Fig. 1 — <em>Strata of understanding</em></span>
+        <span>Naur · Storey · Peirce</span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Plate II — the lifecycle, as a stratigraphic column         -->
+  <!-- ============================================================ -->
+  <section id="lifecycle">
+    <div class="section-head">
+      <span class="section-num">Plate II</span>
+      <h2>The fossilization lifecycle.</h2>
+    </div>
+    <p class="section-sub">Five commands, descending from the surface. Read the column top to bottom; each stratum is one command, and the signs it leaves behind for the next digger.</p>
+
+    <div class="column-wrap">
+      <div class="depth-axis">
+        <span class="depth-tick">0 m</span>
+        <span class="depth-tick">10 m</span>
+        <span class="depth-tick">25 m</span>
+        <span class="depth-tick">45 m</span>
+        <span class="depth-tick">70 m</span>
+        <span class="depth-tick">bedrock</span>
+      </div>
+
+      <div class="column-body">
+
+        <!-- preserve -->
+        <article class="cmd alive">
+          <div>
+            <div class="cmd-stage">Alive · stage I</div>
+            <div class="cmd-name">preserve</div>
+            <div class="cmd-slash"><code>/defossilize:preserve</code></div>
+          </div>
+          <div class="cmd-body">
+            <p>Pin a feature’s <span class="em">why</span> in code <em>while you still understand it</em>. Captures intent (the 故 / 理 / 类 of Mozi), the decision path with rejected alternatives, drift-resistant signs, and a self-explanation score.</p>
+            <p>Run it after <code style="font-family:var(--mono);font-size:14px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">simplify</code>, one feature at a time.</p>
+          </div>
+          <ul class="cmd-signs">
+            <li><span class="label">Signs left</span></li>
+            <li>intent.md</li>
+            <li>decisions.md</li>
+            <li>tour.md</li>
+            <li>why-comments inline</li>
+            <li>characterization tests</li>
+          </ul>
+        </article>
+
+        <!-- thaw -->
+        <article class="cmd half">
+          <div>
+            <div class="cmd-stage">Half-fossil · stage II</div>
+            <div class="cmd-name">thaw</div>
+            <div class="cmd-slash"><code>/defossilize:thaw</code></div>
+          </div>
+          <div class="cmd-body">
+            <p>Rebuild your grasp of a feature you wrote but can no longer read. Loads the signs <span class="em">preserve</span> left, audits them for drift, gives a one-screen orientation, then walks you through a Socratic rebuild and scores what holds.</p>
+            <p>Ephemeral by design — nothing persisted.</p>
+          </div>
+          <ul class="cmd-signs">
+            <li><span class="label">Signs left</span></li>
+            <li>session-scoped</li>
+            <li>orientation screen</li>
+            <li>self-explanation score</li>
+          </ul>
+        </article>
+
+        <!-- excavate -->
+        <article class="cmd dig">
+          <div>
+            <div class="cmd-stage">Full fossil · dig</div>
+            <div class="cmd-name">excavate</div>
+            <div class="cmd-slash"><code>/defossilize:excavate</code></div>
+          </div>
+          <div class="cmd-body">
+            <p>Map a system you don’t understand — legacy or AI black box. Mines git history as <span class="em">degraded intent-fossils</span>, produces a map of where understanding is thinnest and what’s recoverable, and ranks hotspots for <code style="font-family:var(--mono);font-size:14px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">revive</code>.</p>
+            <p>Does not revive anything itself. Degrades gracefully without git.</p>
+          </div>
+          <ul class="cmd-signs">
+            <li><span class="label">Signs left</span></li>
+            <li>map.md</li>
+            <li>hotspot ranking</li>
+            <li>_progress.md</li>
+          </ul>
+        </article>
+
+        <!-- revive -->
+        <article class="cmd revive">
+          <div>
+            <div class="cmd-stage">Full fossil · revive</div>
+            <div class="cmd-name">revive</div>
+            <div class="cmd-slash"><code>/defossilize:revive</code></div>
+          </div>
+          <div class="cmd-body">
+            <p>Bring one fossil hotspot back to understanding. For each decision it runs <span class="em">predict → reveal → reconcile</span>: you predict first, the AI offers its hypothesis, you reconcile against the code.</p>
+            <p>Lays <code style="font-family:var(--mono);font-size:14px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">provenance=revive</code> signs. Never fabricates; marks irrecoverable intent as <em>unknown</em>.</p>
+          </div>
+          <ul class="cmd-signs">
+            <li><span class="label">Signs left</span></li>
+            <li>understanding.md</li>
+            <li>provenance=revive</li>
+            <li>unknown markers</li>
+          </ul>
+        </article>
+
+        <!-- curate -->
+        <article class="cmd curate">
+          <div>
+            <div class="cmd-stage">Maintenance · surface</div>
+            <div class="cmd-name">curate</div>
+            <div class="cmd-slash"><code>/defossilize:curate</code></div>
+          </div>
+          <div class="cmd-body">
+            <p>Check whether comments, docs, and decision records still match the code, and fix what’s drifted. Classifies each mismatch — drift, stale reference, suspected bug, out-of-scope, reconstruction-was-wrong.</p>
+            <p>Only fixes drift and stale references, after you confirm. Bugs are flagged; revive-origin contradictions go back to <span class="em">revive</span>.</p>
+          </div>
+          <ul class="cmd-signs">
+            <li><span class="label">Signs left</span></li>
+            <li>mismatch classification</li>
+            <li>confirmation log</li>
+          </ul>
+        </article>
+
+      </div>
+    </div>
+
+    <p style="font-family:var(--serif-text);font-style:italic;color:var(--ink-soft);font-size:17px;margin-top:24px;padding-left:90px;max-width:62ch;">
+      Signs live in the target project at <code style="font-family:var(--mono);font-size:14px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">docs/defossilize/&lt;unit&gt;/</code>. Two sign types stay in place — <em>why-comments inline in code</em> and <em>characterization tests in the project test dir</em> — because their location <em>is</em> the drift-resistance. No vector DB, no parallel store.
+    </p>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Plate III — the theory                                      -->
+  <!-- ============================================================ -->
+  <section id="theory">
+    <div class="section-head">
+      <span class="section-num">Plate III</span>
+      <h2>Why a plugin about understanding.</h2>
+    </div>
+    <p class="section-sub">Three threads, braided. The plugin is a tool for keeping the <em>theory</em> — in Naur’s sense — alive in the heads that hold it.</p>
+
+    <div class="duo">
+      <div class="essay">
+        <p>Peirce’s <span class="term">meaning triangle</span> maps a sign to its object through an interpretant — the mind that does the meaning. Storey’s <span class="term">triple-debt model</span> reads this onto software: technical debt is the <em>Object</em>, intent debt the <em>Sign</em>, cognitive debt the <em>Interpretant</em>. <span class="term">defossilize</span> works the last two and leaves the first to other tools.</p>
+
+        <p>Naur argued that <span class="term">programming is theory building</span> — a program is the sediment of a theory that lives, briefly, in its authors’ heads. A dead program usually <em>cannot</em> be revived from docs alone. Hence <span class="term">revive</span>’s honesty about <span class="term">unknown</span>s: some intent is irrecoverable, and saying so is part of the cure.</p>
+
+        <p>Finally, the <span class="term">self-explanation effect</span>: every rebuild is active. You predict first, then explain — never passively outsource. That is why <span class="term">thaw</span> is session-scoped and why <span class="term">revive</span> asks you to predict before it reveals.</p>
+
+        <p class="src">— Full references in the design doc, dated 2026-07-03.</p>
+      </div>
+
+      <figure class="triangle">
+        <svg viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#5C1A1B"/>
+            </marker>
+          </defs>
+          <!-- triangle -->
+          <polygon points="200,40 360,320 40,320"
+                   fill="none" stroke="#5C1A1B" stroke-width="2"/>
+          <!-- vertices -->
+          <circle cx="200" cy="40" r="7" fill="#3E8A7A"/>
+          <circle cx="360" cy="320" r="7" fill="#A6702F"/>
+          <circle cx="40" cy="320" r="7" fill="#5C1A1B"/>
+          <!-- labels -->
+          <text x="200" y="28" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="22" fill="#2A1F17">Interpretant</text>
+          <text x="200" y="50" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#3E8A7A">COGNITIVE DEBT · the mind</text>
+
+          <text x="370" y="328" text-anchor="end" font-family="EB Garamond, serif" font-style="italic" font-size="22" fill="#2A1F17">Object</text>
+          <text x="370" y="350" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#A6702F">TECHNICAL DEBT · the code</text>
+
+          <text x="30" y="328" text-anchor="start" font-family="EB Garamond, serif" font-style="italic" font-size="22" fill="#2A1F17">Sign</text>
+          <text x="30" y="350" text-anchor="start" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#5C1A1B">INTENT DEBT · the record</text>
+
+          <!-- arrows along edges -->
+          <line x1="218" y1="58" x2="342" y2="312" stroke="#5C1A1B" stroke-width="1.4" marker-end="url(#arr)" opacity="0.7"/>
+          <line x1="342" y1="320" x2="58" y2="320" stroke="#5C1A1B" stroke-width="1.4" marker-end="url(#arr)" opacity="0.7"/>
+          <line x1="50" y1="308" x2="190" y2="55" stroke="#5C1A1B" stroke-width="1.4" marker-end="url(#arr)" opacity="0.7"/>
+
+          <!-- center annotation -->
+          <text x="200" y="210" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="16" fill="#5C4A39">meaning</text>
+          <text x="200" y="232" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="16" fill="#5C4A39">is the motion</text>
+          <text x="200" y="254" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="16" fill="#5C4A39">between the three.</text>
+        </svg>
+        <figcaption class="triangle-caption">Fig. 2 — <em>Peirce’s meaning triangle, mapped to Storey’s triple-debt</em></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Plate IV — installation                                      -->
+  <!-- ============================================================ -->
+  <section id="install">
+    <div class="section-head">
+      <span class="section-num">Plate IV</span>
+      <h2>To begin a dig.</h2>
+    </div>
+    <p class="section-sub">Install from the <code style="font-family:var(--mono);font-size:15px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">f2077</code> marketplace on GitHub. Two commands; then any of the five are available as <code style="font-family:var(--mono);font-size:15px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">/defossilize:&lt;command&gt;</code>.</p>
+
+    <figure class="install-plate">
+      <div class="install-bar">
+        <span>terminal · Claude Code</span>
+        <span class="dots">· · ·</span>
+      </div>
+      <pre class="install-body"><span class="prompt">▸</span> <span class="cmd-text">/plugin marketplace add F2077/defossilize</span>
+<span class="comment"># adds the f2077 marketplace, sourced from GitHub</span>
+<span class="out">  ✓ marketplace added</span>
+
+<span class="prompt">▸</span> <span class="cmd-text">/plugin install defossilize@f2077</span>
+<span class="comment"># installs defossilize from that marketplace</span>
+<span class="out">  ✓ installed · 5 lifecycle commands + /continue</span>
+
+<span class="prompt">▸</span> <span class="cmd-text">/defossilize:preserve</span>      <span class="comment"># pin the why, while it’s fresh</span>
+<span class="prompt">▸</span> <span class="cmd-text">/defossilize:excavate</span>      <span class="comment"># map a system you inherited</span>
+<span class="prompt">▸</span> <span class="cmd-text">/defossilize:revive</span>        <span class="comment"># bring one hotspot back</span>
+<span class="prompt">▸</span> <span class="cmd-text">/defossilize:thaw</span>          <span class="comment"># rebuild a theory you forgot</span>
+<span class="prompt">▸</span> <span class="cmd-text">/defossilize:curate</span>        <span class="comment"># reconcile signs with code</span>
+<span class="prompt">▸</span> <span class="cmd-text">/defossilize:continue</span>      <span class="comment"># see in-flight work, pick up</span></pre>
+    </figure>
+
+    <div class="install-notes">
+      <p><strong style="color:var(--oxblood);font-weight:600">Resuming across sessions.</strong> <code>preserve</code>, <code>excavate</code>, and <code>revive</code> write a small <code>docs/defossilize/&lt;unit&gt;/_progress.md</code> as they work, so a paused run can pick up in a later session. Run <code>/defossilize:continue</code> to see everything in flight and where each one stopped. (<code>thaw</code> is session-scoped by design; <code>curate</code> is safely re-runnable from scratch.)</p>
+    </div>
+  </section>
+
+  <!-- ===== Colophon ===== -->
+  <footer class="colophon">
+    <div>
+      <h3>What it is</h3>
+      <p>A Claude Code plugin that reduces intent debt and cognitive debt — the Sign and Interpretant of Margaret-Anne Storey’s triple-debt model. Technical debt (the Object) is out of scope and left to other tools.</p>
+      <p style="margin-top:14px"><a href="https://github.com/F2077/defossilize" target="_blank" rel="noopener">Source on GitHub ↗</a></p>
+    </div>
+    <div>
+      <h3>Where to read more</h3>
+      <ul>
+        <li><a href="https://github.com/F2077/defossilize/blob/main/docs/2026-07-03-defossilize-plugin-design.md" target="_blank" rel="noopener">Design doc</a> — the full rationale</li>
+        <li><a href="https://github.com/F2077/defossilize/blob/main/docs/2026-07-03-defossilize-plugin-plan.md" target="_blank" rel="noopener">Implementation plan</a></li>
+        <li><a href="https://margaretstorey.com/blog/2026/06/23/three-threats-to-meaning/" target="_blank" rel="noopener">Storey · three threats to meaning</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Contributing</h3>
+      <p>The project is early-stage. Please <a href="https://github.com/F2077/defossilize/issues" target="_blank" rel="noopener">open an issue</a> first to sketch what you’d like to change — read the design doc before proposing structural changes.</p>
+    </div>
+
+    <div class="colophon-imprint">
+      <span>© F2077 · MIT · v0.1.0 · a community marketplace plugin</span>
+      <svg class="ammonite-glyph" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g transform="translate(50 50)" fill="none" stroke="#5C1A1B" stroke-width="2.2">
+          <circle cx="0" cy="0" r="40"/>
+          <circle cx="0" cy="0" r="28"/>
+          <circle cx="0" cy="0" r="17"/>
+          <circle cx="0" cy="0" r="7" fill="#5C1A1B" stroke="none"/>
+        </g>
+      </svg>
+      <span>field monograph · set in EB Garamond &amp; IBM Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Gentle scroll-spy: dim the rail mark to the active section.
+  // Kept deliberately small — this is a monograph, not a webapp.
+  (function () {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.crest a[href^="#"]');
+    if (!('IntersectionObserver' in window) || !navLinks.length) return;
+
+    const map = new Map();
+    navLinks.forEach(a => map.set(a.getAttribute('href').slice(1), a));
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navLinks.forEach(a => a.style.color = '');
+          const link = map.get(e.target.id);
+          if (link) link.style.color = 'var(--oxblood)';
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+
+    sections.forEach(s => io.observe(s));
+  })();
+</script>
+
+</body>
+</html>
