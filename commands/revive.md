@@ -1,5 +1,6 @@
 ---
-description: Bring one fossil hotspot back to understanding. For each non-obvious decision it runs predict then reveal then reconcile: you read the code and predict the intent first, then the AI offers its hypothesis (intent, a rejected alternative, a downside, a confidence, and code evidence, answering why not what), then you reconcile against the code. It lays drift-resistant signs tagged provenance=revive with a confidence, and scores how much theory was rebuilt (it starts near 0; a low score is honest). It never fabricates: irrecoverable intent is marked unknown. Run on one hotspot at a time, after `excavate` or directly.
+description: Bring one fossil hotspot back to understanding via predict, reveal, reconcile. Run on one hotspot, after `excavate` or directly.
+argument-hint: <hotspot>
 ---
 
 # Revive: bring a fossil hotspot back to life
@@ -8,11 +9,7 @@ Reverse-rebuild theory where there's none to start from. The code (plus git foss
 
 ## Resume protocol (across sessions)
 
-- Before step 1: read `docs/defossilize/<system>/<hotspot>/_progress.md`. If it shows an in-progress run of THIS command for this hotspot, tell the user where they paused (step name and next action) and ask whether to resume there or start over; resume is the default. If it shows a different in-progress command for this hotspot, flag that and suggest finishing it first.
-- After each step: rewrite `_progress.md` with `command`, `unit`, `status: in-progress`, the current `step` and `step_name`, the `done` list, and a one-line `next` action, plus the `updated` date.
-- On completion: delete `_progress.md`.
-
-`_progress.md` is workflow state, not a sign; `curate` ignores it. Run `/defossilize:continue` to see everything in flight.
+Before step 1, read `docs/defossilize/<system>/<hotspot>/_progress.md`. If THIS command is in-progress here, report the paused step + next action and ask resume-or-restart (default resume); if a different command is in-progress, flag it. After each step, rewrite it with `command`, `unit`, `status: in-progress`, `step`/`step_name`, `done`, a one-line `next`, and `updated`; delete it on completion. It's workflow state, not a sign (`curate` skips it); `/defossilize:continue` lists in-flight work.
 
 ## When to run
 

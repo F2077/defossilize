@@ -1,5 +1,6 @@
 ---
-description: Pin a feature's "why" in code while you still understand it, so it doesn't fossilize later. Captures intent (Mozi 故/理/类), the intent-to-code decision path with rejected alternatives, drift-resistant signs (why-comments, a reading tour, characterization tests), and a self-explanation score. Run after `simplify`, one feature at a time.
+description: Pin a feature's "why" in code while you still understand it. Run after `simplify`, one feature at a time.
+argument-hint: <feature>
 ---
 
 # Preserve: lock in the "why" while it's fresh
@@ -8,11 +9,7 @@ This is the best moment to pin a feature's theory: context is fresh, so you capt
 
 ## Resume protocol (across sessions)
 
-- Before step 1: read `docs/defossilize/<feature>/_progress.md`. If it shows an in-progress run of THIS command for this feature, tell the user where they paused (step name and next action) and ask whether to resume there or start over; resume is the default. If it shows a different in-progress command for this feature, flag that and suggest finishing it first.
-- After each step: rewrite `_progress.md` with `command`, `unit`, `status: in-progress`, the current `step` and `step_name`, the `done` list, and a one-line `next` action, plus the `updated` date.
-- On completion: delete `_progress.md`.
-
-`_progress.md` is workflow state, not a sign; `curate` ignores it. Run `/defossilize:continue` to see everything in flight.
+Before step 1, read `docs/defossilize/<feature>/_progress.md`. If THIS command is in-progress here, report the paused step + next action and ask resume-or-restart (default resume); if a different command is in-progress, flag it. After each step, rewrite it with `command`, `unit`, `status: in-progress`, `step`/`step_name`, `done`, a one-line `next`, and `updated`; delete it on completion. It's workflow state, not a sign (`curate` skips it); `/defossilize:continue` lists in-flight work.
 
 ## When to run
 

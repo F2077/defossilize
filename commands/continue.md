@@ -1,5 +1,5 @@
 ---
-description: See in-flight defossilize work and pick up where you left off. Lists every paused unit in the target project (command, step, next action) and routes you back to the right command. Run this when you return to a project and don't remember where a run stopped.
+description: See in-flight defossilize work and pick up where you left off. Run when you return and don't remember where a run stopped.
 ---
 
 # Continue: see where you paused, and pick it back up

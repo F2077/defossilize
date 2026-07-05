@@ -1,5 +1,6 @@
 ---
-description: Check whether the project's comments, docs, and decision records still match the code, and fix what's drifted. Run it after a refactor or rename, before a release, or as routine cleanup. It covers code comments, prose docs, API specs (OpenAPI, proto, GraphQL), ADRs, commit messages and PR descriptions, tests-as-specs, and this plugin's own docs/defossilize/ records. Each mismatch is classified (drift, stale reference, suspected bug, out-of-scope, or reconstruction-was-wrong), and only behavioral drift and stale references are auto-fixed, after you confirm. Invariant violations are flagged as suspected bugs, and contradictions in reconstructed (revive-origin) signs are routed back to `revive` instead of being quietly rewritten.
+description: Reconcile comments, docs, specs, and ADRs with the code after a refactor or before a release. Fixes only drift and stale references, after you confirm.
+argument-hint: [scope]
 ---
 
 # Curate: align intent artifacts (signs) with code
