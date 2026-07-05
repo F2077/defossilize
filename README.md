@@ -85,8 +85,12 @@ The project site lives in [`site/`](site/) and is published to GitHub Pages by t
 
 ## Contributing
 
-Contributions are welcome. The project is early-stage, so please open an issue first to sketch what you'd like to change. See [`docs/`](docs/) for the design rationale behind each command before proposing structural changes.
+Contributions are welcome. The project is early-stage, so please open an issue first to sketch what you'd like to change. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the contribution workflow, and [`docs/`](docs/) for the design rationale behind each command before proposing structural changes.
 
 ## License
 
 [MIT](LICENSE) © F2077
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=F2077/defossilize&type=Date)](https://star-history.com/#F2077/defossilize&Date)
