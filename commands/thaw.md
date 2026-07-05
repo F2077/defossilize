@@ -1,5 +1,6 @@
 ---
-description: Rebuild your grasp of a feature you wrote but can't read anymore. Loads the signs `preserve` left, audits them for drift (flagging revive-origin signs as possibly wrong), gives a one-screen orientation, then walks you through a Socratic rebuild where you explain and it fills the gaps, and scores what holds. Run on demand when you're rusty on your own code. Ephemeral by default: nothing is saved unless you confirm a gap-fill.
+description: Rebuild your grasp of a feature you wrote but can no longer read. Run on demand when you're rusty on your own code. Ephemeral by default.
+argument-hint: <feature>
 ---
 
 # Thaw: rebuild the theory from the signs

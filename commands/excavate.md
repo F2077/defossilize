@@ -1,5 +1,6 @@
 ---
-description: Map a system you don't understand, whether inherited legacy or an AI-written black box you never got. Triages the code and mines git history (commits, PRs, blame) as degraded intent-fossils, then produces a map of where understanding is thinnest, what's recoverable versus irrecoverable, and the risk if you're wrong, plus a ranked hotspot list to feed to `revive`. It does not try to revive anything itself. Run when taking over a system. It degrades gracefully when git is absent or squashed.
+description: Map a system you don't understand (inherited legacy or an AI black box) and rank hotspots to feed to `revive`. Run when taking over a system.
+argument-hint: <system>
 ---
 
 # Excavate: map the fossil, pick where to revive
@@ -8,11 +9,7 @@ You've taken over a system you don't understand: inherited legacy, or an AI blac
 
 ## Resume protocol (across sessions)
 
-- Before step 1: read `docs/defossilize/<system>/_progress.md`. If it shows an in-progress run of THIS command for this system, tell the user where they paused (step name and next action) and ask whether to resume there or start over; resume is the default. If it shows a different in-progress command for this system, flag that and suggest finishing it first.
-- After each step: rewrite `_progress.md` with `command`, `unit`, `status: in-progress`, the current `step` and `step_name`, the `done` list, and a one-line `next` action, plus the `updated` date.
-- On completion: delete `_progress.md`.
-
-`_progress.md` is workflow state, not a sign; `curate` ignores it. Run `/defossilize:continue` to see everything in flight.
+Before step 1, read `docs/defossilize/<system>/_progress.md`. If THIS command is in-progress here, report the paused step + next action and ask resume-or-restart (default resume); if a different command is in-progress, flag it. After each step, rewrite it with `command`, `unit`, `status: in-progress`, `step`/`step_name`, `done`, a one-line `next`, and `updated`; delete it on completion. It's workflow state, not a sign (`curate` skips it); `/defossilize:continue` lists in-flight work.
 
 ## When to run
 

@@ -1,14 +1,14 @@
 <div align="center">
-  <img src="logo.png" alt="defossilize logo" width="240">
+  <img src="site/logo.png" alt="defossilize logo" width="240">
 
   <h1>defossilize</h1>
 
   <p><em>Turn fossil code back into understanding.</em></p>
 
-  <p>A <a href="https://claude.com/claude-code">Claude Code</a> plugin that reduces <strong>intent debt</strong> and <strong>cognitive debt</strong> — the Sign and Interpretant of Margaret-Anne Storey's <a href="https://margaretstorey.com/blog/2026/06/23/three-threats-to-meaning/">triple-debt model</a>. Technical debt (the Object) is out of scope and left to other tools.</p>
+  <p>A <a href="https://claude.com/claude-code">Claude Code</a> plugin that reduces <strong>intent debt</strong> and <strong>cognitive debt</strong> (the Sign and Interpretant of Margaret-Anne Storey's <a href="https://margaretstorey.com/blog/2026/06/23/three-threats-to-meaning/">triple-debt model</a>). Technical debt (the Object) is out of scope and left to other tools.</p>
 
   <p>
-    <img alt="version" src="https://img.shields.io/badge/version-v0.1.0-8B4513">
+    <img alt="version" src="https://img.shields.io/badge/version-v0.1.1-8B4513">
     <img alt="license" src="https://img.shields.io/badge/license-MIT-green">
     <img alt="Claude Code" src="https://img.shields.io/badge/Claude%20Code-plugin-D97757">
   </p>
@@ -35,7 +35,7 @@ Available via the `f2077` marketplace on GitHub.
 /plugin install defossilize@f2077
 ```
 
-Then run any command as `/defossilize:<command>` — e.g. `/defossilize:preserve`.
+Then run any command as `/defossilize:<command>`, e.g. `/defossilize:preserve`.
 
 ## Commands (the fossilization lifecycle)
 
@@ -66,7 +66,7 @@ Peirce's meaning triangle (Object / Sign / Interpretant) mapped to software heal
 
 ## Status
 
-v0.1.0 — five lifecycle commands (`preserve`, `thaw`, `excavate`, `revive`, `curate`) plus `/defossilize:continue` for resuming a paused run across sessions. See the design doc and implementation plan in [`docs/`](docs/) (dated 2026-07-03).
+v0.1.1: five lifecycle commands (`preserve`, `thaw`, `excavate`, `revive`, `curate`) plus `/defossilize:continue` for resuming a paused run across sessions. See the design doc and implementation plan in [`docs/`](docs/) (dated 2026-07-03).
 
 ## Releases
 
@@ -77,7 +77,7 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-The release body notes any mismatch between the tag and the version in [`plugin.json`](.claude-plugin/plugin.json) — keep them in sync.
+The release body notes any mismatch between the tag and the version in [`plugin.json`](.claude-plugin/plugin.json). Keep them in sync.
 
 ## Site
 
@@ -85,8 +85,12 @@ The project site lives in [`site/`](site/) and is published to GitHub Pages by t
 
 ## Contributing
 
-Contributions are welcome. The project is early-stage, so please open an issue first to sketch what you'd like to change. See [`docs/`](docs/) for the design rationale behind each command before proposing structural changes.
+Contributions are welcome. The project is early-stage, so please open an issue first to sketch what you'd like to change. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the contribution workflow, and [`docs/`](docs/) for the design rationale behind each command before proposing structural changes.
 
 ## License
 
 [MIT](LICENSE) © F2077
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=F2077/defossilize&type=Date)](https://star-history.com/#F2077/defossilize&Date)
