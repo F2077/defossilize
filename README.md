@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo.png" alt="defossilize logo" width="240">
+  <img src="site/logo.png" alt="defossilize logo" width="240">
 
   <h1>defossilize</h1>
 
