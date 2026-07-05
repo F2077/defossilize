@@ -8,7 +8,7 @@
   <p>A <a href="https://claude.com/claude-code">Claude Code</a> plugin that reduces <strong>intent debt</strong> and <strong>cognitive debt</strong> (the Sign and Interpretant of Margaret-Anne Storey's <a href="https://margaretstorey.com/blog/2026/06/23/three-threats-to-meaning/">triple-debt model</a>). Technical debt (the Object) is out of scope and left to other tools.</p>
 
   <p>
-    <img alt="version" src="https://img.shields.io/badge/version-v0.1.0-8B4513">
+    <img alt="version" src="https://img.shields.io/badge/version-v0.1.1-8B4513">
     <img alt="license" src="https://img.shields.io/badge/license-MIT-green">
     <img alt="Claude Code" src="https://img.shields.io/badge/Claude%20Code-plugin-D97757">
   </p>
@@ -66,7 +66,7 @@ Peirce's meaning triangle (Object / Sign / Interpretant) mapped to software heal
 
 ## Status
 
-v0.1.0: five lifecycle commands (`preserve`, `thaw`, `excavate`, `revive`, `curate`) plus `/defossilize:continue` for resuming a paused run across sessions. See the design doc and implementation plan in [`docs/`](docs/) (dated 2026-07-03).
+v0.1.1: five lifecycle commands (`preserve`, `thaw`, `excavate`, `revive`, `curate`) plus `/defossilize:continue` for resuming a paused run across sessions. See the design doc and implementation plan in [`docs/`](docs/) (dated 2026-07-03).
 
 ## Releases
 
