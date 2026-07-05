@@ -4,7 +4,7 @@ Notes for Claude working in this repo. Public docs are README.md and docs/.
 
 ## The product is markdown prompts, not code
 
-defossilize is a Claude Code plugin. Its commands are prompt files —
+defossilize is a Claude Code plugin. Its commands are prompt files in
 `commands/*.md`, one per slash command. No runtime, no build, no tests.
 "Change a command" = edit prompt markdown. Design rationale lives in `docs/`.
 
