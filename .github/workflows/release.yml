@@ -1,0 +1,68 @@
+# Cut a GitHub Release when a semver tag is pushed.
+#
+# Trigger:  push of a tag matching  v[0-9]*.[0-9]*.[0-9]*  (e.g. v0.1.0)
+# Produces: a GitHub Release with auto-generated notes (PRs + commit log since
+#           the previous tag) plus GitHub's built-in source archive assets
+#           (zip + tarball). No custom packaging — for a Claude Code plugin
+#           the source tree *is* the artifact (see marketplace.json `source`).
+#
+# How to use:
+#   git tag v0.1.0
+#   git push origin v0.1.0
+# The release will be drafted automatically. Edit the body in the GitHub UI
+# if you want a curated changelog for a given release.
+#
+# Security notes:
+#   - `contents: write` is required by `gh release` / action-gh-release to
+#     create the release object. No other permissions are granted.
+#   - `softprops/action-gh-release` is a widely used third-party action. We
+#     pin to a major version. If you prefer no third-party actions, replace
+#     this step with the official CLI:
+#       run: gh release create "$TAG" --generate-notes --title "$TAG"
+#     (and add `env: GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}`).
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*.[0-9]*.[0-9]*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need full history for `generate-notes` to diff tags
+
+      - name: Read version from plugin manifest
+        id: ver
+        shell: bash
+        run: |
+          # The git tag is the source of truth for the release number; we just
+          # sanity-check it against plugin.json so they can't drift silently.
+          TAG="${GITHUB_REF_NAME#v}"
+          MANIFEST=$(jq -r '.version' .claude-plugin/plugin.json 2>/dev/null || echo "")
+          echo "tag version:   $TAG"
+          echo "manifest says: ${MANIFEST:-<unreadable>}"
+          if [ -n "$MANIFEST" ] && [ "$MANIFEST" != "$TAG" ]; then
+            echo "::warning::plugin.json version ($MANIFEST) does not match tag ($TAG). Consider bumping plugin.json before tagging."
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # generate_release_notes produces the auto-generated changelog
+          # (PR/commit summary since the last tag) as the release body.
+          generate_release_notes: true
+          name: ${{ github.ref_name }}
+          # The source archive assets are attached automatically by GitHub;
+          # nothing to upload explicitly.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

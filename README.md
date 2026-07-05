@@ -68,6 +68,21 @@ Peirce's meaning triangle (Object / Sign / Interpretant) mapped to software heal
 
 v0.1.0 — five lifecycle commands (`preserve`, `thaw`, `excavate`, `revive`, `curate`) plus `/defossilize:continue` for resuming a paused run across sessions. See the design doc and implementation plan in [`docs/`](docs/) (dated 2026-07-03).
 
+## Releases
+
+Releases are cut by pushing a semver tag. Pushing `v0.x.0` triggers the [`Release` workflow](.github/workflows/release.yml), which drafts a GitHub Release with auto-generated notes (PR/commit summary since the previous tag) and GitHub's built-in source archive assets.
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The release body notes any mismatch between the tag and the version in [`plugin.json`](.claude-plugin/plugin.json) — keep them in sync.
+
+## Site
+
+The project site lives in [`site/`](site/) and is published to GitHub Pages by the [`pages.yml` workflow](.github/workflows/pages.yml) on every push to `main` that touches `site/`. It is a self-contained static page (no build step). After enabling Pages in the repo settings (**Settings → Pages → Source: GitHub Actions**), it will be served at `https://f2077.github.io/defossilize/`.
+
 ## Contributing
 
 Contributions are welcome. The project is early-stage, so please open an issue first to sketch what you'd like to change. See [`docs/`](docs/) for the design rationale behind each command before proposing structural changes.

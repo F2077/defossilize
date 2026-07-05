@@ -1,0 +1,77 @@
+# Build and deploy the project site to GitHub Pages.
+#
+# Source: ./site  (a self-contained directory — no repo-root deps)
+# Trigger: any push to main that touches site/, plus manual dispatch.
+# Pages is served at https://<user>.github.io/defossilize/
+#
+# Security notes:
+#   - `permissions: contents: read` is the least privilege needed; Pages write
+#     is granted separately via the dedicated `pages: write` + `id-token: write`
+#     (required for the OIDC-based deploy step).
+#   - We pin `actions/configure-pages` / `actions/upload-pages-artifact` /
+#     `actions/deploy-pages` to a major version. Breaking changes are absorbed
+#     by the vN tag rather than the commit pin, which is GitHub's own
+#     recommendation for first-party actions.
+
+name: Deploy site to Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+# Allow only one concurrent Pages deploy — cancel any in-flight run when a new
+# push lands, but never cancel a deploy that's already running.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  # Tell the actions which path to publish. Keeping this in one place makes it
+  # trivial to move the site later without editing every step.
+  SITE_DIR: site
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history; cheap insurance if we add sitemap later
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # No build step — the site is plain HTML/CSS/JS, hand-written and
+      # self-contained. If we ever adopt a generator, slot it here.
+      - name: Sanity-check site directory
+        run: |
+          test -f "$SITE_DIR/index.html" || { echo "::error::site/index.html not found"; exit 1; }
+          echo "site contents:"
+          ls -la "$SITE_DIR"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.SITE_DIR }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
