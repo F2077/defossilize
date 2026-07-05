@@ -12,8 +12,9 @@ defossilize is a Claude Code plugin. Its commands are prompt files in
 
 - Self-contained static page → GitHub Pages via `.github/workflows/pages.yml`.
   **Pages publishes only the `site/` directory**, so any asset the page
-  references must live inside `site/` (repo-root `logo.png` is unreachable
-  from the published page; copy it in).
+  references must live inside `site/`. The repo-root `logo.png` is the
+  canonical source; `site/logo.png` is its copy for Pages. After editing
+  the logo, sync with `cp logo.png site/logo.png`.
 - Palette is deliberate ("strata / fossil" theme): `--bone --ash --ochre
   --oxblood --verdigris --ink` in `site/index.html :root`. Respect it on
   visual changes.
