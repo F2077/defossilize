@@ -147,20 +147,28 @@ body {
   position: relative;
 }
 
+/* The project mark sits in a "specimen card" — warm-white stock with a hairline
+   ash frame, so the logo's own white ground reads as pasted into the monograph
+   rather than floating on the bone page. */
 .ammonite {
   position: relative;
   width: 100%;
   max-width: 380px;
   aspect-ratio: 1;
   margin-left: auto;
-  filter: drop-shadow(0 18px 30px rgba(92, 26, 27, 0.18)) drop-shadow(0 2px 4px rgba(42,31,23,0.12));
+  background: #FBF7EC;
+  border: 1px solid var(--ash);
+  padding: 16px;
+  box-shadow:
+    0 18px 32px rgba(92, 26, 27, 0.14),
+    0 2px 5px rgba(42, 31, 23, 0.10);
   animation: settle 1.2s cubic-bezier(.2,.7,.2,1) both;
 }
 @keyframes settle {
-  from { opacity: 0; transform: translateY(14px) rotate(-2.5deg) scale(.96); }
-  to   { opacity: 1; transform: translateY(0) rotate(-1.5deg) scale(1); }
+  from { opacity: 0; transform: translateY(14px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-.ammonite svg { width: 100%; height: 100%; display: block; }
+.ammonite img { width: 100%; height: 100%; display: block; object-fit: contain; }
 
 .frontispiece .copy { max-width: 520px; }
 
@@ -760,93 +768,9 @@ section {
       </div>
     </div>
 
-    <!-- Ammonite — a single coal-age specimen, drawn as inline SVG so it renders crisp -->
-    <figure class="ammonite" aria-label="Ammonite spiral, the project mark">
-      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="shellBody" cx="42%" cy="40%" r="62%">
-            <stop offset="0%"  stop-color="#D9A468"/>
-            <stop offset="38%" stop-color="#A6702F"/>
-            <stop offset="72%" stop-color="#7A4A1C"/>
-            <stop offset="100%" stop-color="#3A2410"/>
-          </radialGradient>
-          <radialGradient id="chamber" cx="50%" cy="50%" r="60%">
-            <stop offset="0%"  stop-color="#2A1F17"/>
-            <stop offset="100%" stop-color="#4A3520"/>
-          </radialGradient>
-          <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence baseFrequency="0.9" numOctaves="2" seed="7"/>
-            <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0"/>
-            <feComposite operator="in" in2="SourceGraphic"/>
-          </filter>
-        </defs>
-
-        <!-- main spiral body -->
-        <g transform="translate(200 205)">
-          <!-- outermost whorl -->
-          <path d="M 0 0
-                   m -168 0
-                   a 168 168 0 1 0 336 0
-                   a 168 168 0 1 0 -282 -50"
-                fill="url(#shellBody)" stroke="#3A2410" stroke-width="2"/>
-
-          <!-- successive whorls -->
-          <path d="M 0 0 m -130 0 a 130 130 0 1 0 252 18 a 130 130 0 1 0 -210 -38"
-                fill="#9E6826" stroke="#3A2410" stroke-width="1.5"/>
-          <path d="M 0 0 m -95 0 a 95 95 0 1 0 178 24 a 95 95 0 1 0 -148 -30"
-                fill="#8B5A22" stroke="#3A2410" stroke-width="1.5"/>
-          <path d="M 0 0 m -62 0 a 62 62 0 1 0 116 26 a 62 62 0 1 0 -94 -28"
-                fill="#7A4A1C" stroke="#3A2410" stroke-width="1.5"/>
-          <path d="M 0 0 m -34 0 a 34 34 0 1 0 62 16 a 34 34 0 1 0 -50 -18"
-                fill="#5C3614" stroke="#3A2410" stroke-width="1.5"/>
-
-          <!-- suture lines — the zigzag ribs that mark chamber boundaries -->
-          <g stroke="#2A1A08" stroke-width="1.2" fill="none" opacity="0.7">
-            <path d="M -160 -30 Q -150 -45 -135 -38 T -110 -42"/>
-            <path d="M -158  40 Q -148  52 -134  46 T -108  50"/>
-            <path d="M  120  70 Q  132  58  146  64 T  168  60"/>
-            <path d="M  148 -64 Q  158 -76  172 -68 T  190 -72"/>
-            <path d="M -40 -118 Q -28 -132 -14 -124 T  12 -128"/>
-          </g>
-
-          <!-- chamber openings along the outer rim -->
-          <circle cx="-138" cy="-92" r="9" fill="url(#chamber)"/>
-          <circle cx="118"  cy="-114" r="8" fill="url(#chamber)"/>
-          <circle cx="148"  cy="78"  r="8" fill="url(#chamber)"/>
-          <circle cx="-104" cy="138" r="7" fill="url(#chamber)"/>
-          <circle cx="-160" cy="40"  r="6" fill="url(#chamber)"/>
-
-          <!-- the living chamber — final, largest -->
-          <path d="M 0 0 m -168 0 a 168 168 0 0 1 130 -78 q 30 10 38 24"
-                fill="#B8792E" stroke="#3A2410" stroke-width="2" opacity="0.92"/>
-
-          <!-- aperture -->
-          <path d="M 28 -150 q 18 -8 30 6 q 8 12 -4 22 q -16 6 -28 -6 z"
-                fill="#3A2410" stroke="#1A0F05" stroke-width="1.5"/>
-
-          <!-- nucleolus center -->
-          <circle cx="0" cy="0" r="14" fill="#2A1A08"/>
-          <circle cx="-2" cy="-2" r="5" fill="#5C3614"/>
-
-          <!-- ribs running across the outer whorl -->
-          <g stroke="#3A2410" stroke-width="1.4" opacity="0.55">
-            <line x1="-165" y1="-20" x2="-150" y2="-15"/>
-            <line x1="-150" y1="-80" x2="-138" y2="-72"/>
-            <line x1="-95"  y1="-138" x2="-86" y2="-128"/>
-            <line x1="-20"  y1="-168" x2="-18" y2="-152"/>
-            <line x1="60"   y1="-160" x2="54"  y2="-144"/>
-            <line x1="130"  y1="-108" x2="118" y2="-100"/>
-            <line x1="168"  y1="-20"  x2="152" y2="-18"/>
-            <line x1="150"  y1="78"   x2="136" y2="72"/>
-            <line x1="80"   y1="150"  x2="72"  y2="136"/>
-            <line x1="-30"  y1="166"  x2="-26" y2="150"/>
-            <line x1="-120" y1="120"  x2="-108" y2="108"/>
-          </g>
-        </g>
-
-        <!-- grain over everything -->
-        <rect width="400" height="400" filter="url(#rough)" opacity="0.6"/>
-      </svg>
+    <!-- Project mark — the defossilize logo: a theropod fossil half-buried in desert sand -->
+    <figure class="ammonite" aria-label="defossilize project mark — a theropod fossil half-buried in desert sand">
+      <img src="logo.png" alt="A theropod dinosaur fossil half-buried in desert sand — the defossilize project mark" width="1254" height="1254">
     </figure>
   </section>
 
@@ -1045,38 +969,37 @@ section {
       </div>
 
       <figure class="triangle">
-        <svg viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 460 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Peirce's meaning triangle mapped to Storey's triple-debt model">
           <defs>
-            <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
-              <path d="M 0 0 L 10 5 L 0 10 z" fill="#5C1A1B"/>
+            <marker id="arr" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+              <path d="M 0 0 L 11 5.5 L 0 11 z" fill="#5C1A1B"/>
             </marker>
           </defs>
-          <!-- triangle -->
-          <polygon points="200,40 360,320 40,320"
-                   fill="none" stroke="#5C1A1B" stroke-width="2"/>
+          <!-- triangle edges -->
+          <polygon points="230,70 400,330 60,330" fill="none" stroke="#5C1A1B" stroke-width="2"/>
           <!-- vertices -->
-          <circle cx="200" cy="40" r="7" fill="#3E8A7A"/>
-          <circle cx="360" cy="320" r="7" fill="#A6702F"/>
-          <circle cx="40" cy="320" r="7" fill="#5C1A1B"/>
-          <!-- labels -->
-          <text x="200" y="28" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="22" fill="#2A1F17">Interpretant</text>
-          <text x="200" y="50" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#3E8A7A">COGNITIVE DEBT · the mind</text>
+          <circle cx="230" cy="70" r="7" fill="#3E8A7A"/>
+          <circle cx="400" cy="330" r="7" fill="#A6702F"/>
+          <circle cx="60" cy="330" r="7" fill="#5C1A1B"/>
+          <!-- labels — each placed outside its vertex, away from the centroid -->
+          <text x="230" y="34" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="22" fill="#2A1F17">Interpretant</text>
+          <text x="230" y="54" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#3E8A7A">COGNITIVE DEBT · the mind</text>
 
-          <text x="370" y="328" text-anchor="end" font-family="EB Garamond, serif" font-style="italic" font-size="22" fill="#2A1F17">Object</text>
-          <text x="370" y="350" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#A6702F">TECHNICAL DEBT · the code</text>
+          <text x="450" y="312" text-anchor="end" font-family="EB Garamond, serif" font-style="italic" font-size="22" fill="#2A1F17">Object</text>
+          <text x="450" y="350" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#A6702F">TECHNICAL DEBT · the code</text>
 
-          <text x="30" y="328" text-anchor="start" font-family="EB Garamond, serif" font-style="italic" font-size="22" fill="#2A1F17">Sign</text>
-          <text x="30" y="350" text-anchor="start" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#5C1A1B">INTENT DEBT · the record</text>
+          <text x="10" y="312" text-anchor="start" font-family="EB Garamond, serif" font-style="italic" font-size="22" fill="#2A1F17">Sign</text>
+          <text x="10" y="350" text-anchor="start" font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="#5C1A1B">INTENT DEBT · the record</text>
 
-          <!-- arrows along edges -->
-          <line x1="218" y1="58" x2="342" y2="312" stroke="#5C1A1B" stroke-width="1.4" marker-end="url(#arr)" opacity="0.7"/>
-          <line x1="342" y1="320" x2="58" y2="320" stroke="#5C1A1B" stroke-width="1.4" marker-end="url(#arr)" opacity="0.7"/>
-          <line x1="50" y1="308" x2="190" y2="55" stroke="#5C1A1B" stroke-width="1.4" marker-end="url(#arr)" opacity="0.7"/>
+          <!-- arrows along edges — endpoints computed to land exactly between vertex circles -->
+          <line x1="234" y1="76" x2="395" y2="322" stroke="#5C1A1B" stroke-width="1.6" marker-end="url(#arr)" opacity="0.75"/>
+          <line x1="393" y1="330" x2="69" y2="330" stroke="#5C1A1B" stroke-width="1.6" marker-end="url(#arr)" opacity="0.75"/>
+          <line x1="64" y1="324" x2="225" y2="78" stroke="#5C1A1B" stroke-width="1.6" marker-end="url(#arr)" opacity="0.75"/>
 
           <!-- center annotation -->
-          <text x="200" y="210" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="16" fill="#5C4A39">meaning</text>
-          <text x="200" y="232" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="16" fill="#5C4A39">is the motion</text>
-          <text x="200" y="254" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="16" fill="#5C4A39">between the three.</text>
+          <text x="230" y="232" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="16" fill="#5C4A39">meaning</text>
+          <text x="230" y="254" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="16" fill="#5C4A39">is the motion</text>
+          <text x="230" y="276" text-anchor="middle" font-family="EB Garamond, serif" font-style="italic" font-size="16" fill="#5C4A39">between the three.</text>
         </svg>
         <figcaption class="triangle-caption">Fig. 2 — <em>Peirce’s meaning triangle, mapped to Storey’s triple-debt</em></figcaption>
       </figure>
