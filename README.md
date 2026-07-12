@@ -8,7 +8,7 @@
   <p>A <a href="https://claude.com/claude-code">Claude Code</a> plugin that reduces <strong>intent debt</strong> and <strong>cognitive debt</strong> (the Sign and Interpretant of Margaret-Anne Storey's <a href="https://margaretstorey.com/blog/2026/06/23/three-threats-to-meaning/">triple-debt model</a>). Technical debt (the Object) is out of scope and left to other tools.</p>
 
   <p>
-    <img alt="version" src="https://img.shields.io/badge/version-v0.1.1-8B4513">
+    <img alt="version" src="https://img.shields.io/badge/version-v0.2.0-8B4513">
     <img alt="license" src="https://img.shields.io/badge/license-MIT-green">
     <img alt="Claude Code" src="https://img.shields.io/badge/Claude%20Code-plugin-D97757">
   </p>
@@ -37,17 +37,21 @@ Available via the `f2077` marketplace on GitHub.
 
 Then run any command as `/defossilize:<command>`, e.g. `/defossilize:preserve`.
 
-## Commands (the fossilization lifecycle)
+## Commands
 
-| Stage | Command | What it does |
-|---|---|---|
-| Alive | `preserve` | Pin a feature's "why" in code while you still understand it. Captures intent (Mozi 故/理/类), the decision path with rejected alternatives, drift-resistant signs (why-comments, a reading tour, characterization tests), and a self-explanation score. Run after `simplify`, one feature at a time. |
-| Half-fossil | `thaw` | Rebuild your grasp of a feature you wrote but can't read anymore. Loads the signs `preserve` left, audits them for drift, gives a one-screen orientation, then walks you through a Socratic rebuild and scores what holds. Ephemeral by default. |
-| Full fossil · dig | `excavate` | Map a system you don't understand, whether legacy or an AI black box. Mines git history as degraded intent-fossils, produces a map of where understanding is thinnest and what's recoverable, and ranks hotspots for `revive`. Does not revive anything itself. Degrades gracefully without git. |
-| Full fossil · revive | `revive` | Bring one fossil hotspot back to understanding. For each decision it runs predict → reveal → reconcile: you predict first, the AI offers its hypothesis, you reconcile against the code. Lays `provenance=revive` signs. Never fabricates; marks irrecoverable intent as `unknown`. |
-| Maintenance | `curate` | Check whether comments, docs, and decision records still match the code, and fix what's drifted. Classifies each mismatch (drift, stale reference, suspected bug, out-of-scope, reconstruction-was-wrong). Only fixes drift and stale references, after you confirm; bugs are flagged, and revive-origin contradictions go back to `revive`. |
+| Command | What it does |
+|---|---|
+| `preserve` | Pin the why before it petrifies. Pin a feature's "why" into code while you still understand it. One feature at a time; run after `simplify`. |
+| `thaw` | Re-grasp your own code you can no longer read. Loads the signs `preserve` left, orients you, then rebuilds via retelling or deconstruction. Session-scoped by default. |
+| `excavate` | Survey an unfamiliar system (inherited legacy or AI black box), rank units for `revive`. Mines git history and structure; degrades gracefully without git. |
+| `revive` | Rebuild understanding of one unit that has gone cold: you predict, the assistant reveals a confidence-rated hypothesis, then you check it against code. Never fabricates; marks irrecoverable intent as `unknown`. |
+| `curate` | Before a refactor or release, reconcile comments/docs/specs/signs with the code. Classifies each mismatch (drift, invariant violated, stale reference, out-of-scope, reconstruction-was-wrong); after you confirm, fixes only the artifacts, not the logic. |
+| `continue` | See in-flight work and pick up where you left off. Run when you come back and don't remember where a run stopped. |
+| `catalog` | Save a manual checkpoint. Use it to pause inside any in-flight command, or call standalone bound to a unit. |
+| `guard` | Toggle the understanding-watch. On = while coding, the model pauses to capture your understanding when a logic unit grows deep/large. Opt-in, persists per project. |
+| `using-defossilize` | Not sure which command? Describe your situation; it reads git and in-flight state, picks the right command, and runs it. |
 
-Signs live in the **target project** at `docs/defossilize/<unit>/` (`intent.md`, `decisions.md`, `tour.md`, `understanding.md`, and for legacy `map.md`). Two sign types stay in place: **why-comments inline in code** and **characterization tests in the project test dir**, because their location is the drift-resistance. No vector DB, no parallel store.
+Signs live in the **target project** at `docs/defossilize/<area>/<unit>/` (`specimen.md`, `.progress.md`, and for legacy `map.md`). One sign type stays in place: **why-comments inline in code**, because their location is the drift-resistance. No vector DB, no parallel store.
 
 ## Typical flow
 
@@ -55,10 +59,21 @@ Signs live in the **target project** at `docs/defossilize/<unit>/` (`intent.md`,
 - **Wrote it, can't read it anymore** → `thaw` rebuilds the theory from the signs `preserve` left.
 - **Inherited a black box** → `excavate` maps it, then `revive` rebuilds one hotspot at a time.
 - **Signs and code have drifted apart** → `curate` reconciles them.
+- **Need to stop mid-run** → `catalog` saves a checkpoint; `continue` picks it up later.
 
 ## Resuming across sessions
 
-`preserve`, `excavate`, and `revive` write a small `docs/defossilize/<unit>/_progress.md` as they work, so a paused run can pick up in a later session. Run `/defossilize:continue` to see everything in flight and where each one stopped. (`thaw` is session-scoped by design; `curate` is safely re-runnable from scratch.)
+`preserve`, `excavate`, and `revive` write a small `docs/defossilize/<area>/<unit>/.progress.md` as they work, so a paused run can pick up in a later session. Run `/defossilize:continue` to see everything in flight and where each one stopped. Need to pause on purpose? `/defossilize:catalog` saves a manual checkpoint bound to the unit. (`thaw` is session-scoped by design; `curate` is safely re-runnable from scratch.)
+
+## Understanding-watch (`guard`)
+
+Opt-in, default off. Turn it on in a project where you want defossilize to watch your understanding while you code:
+
+```
+/defossilize:guard on
+```
+
+When on, the model watches for a bounded logic unit (a function / method / module with clear boundaries) that has grown deep or large, and pauses for a quick capture: you summarize what it does in one paragraph, it records 故/理 into the unit's `specimen.md`, and offers full `preserve`. It persists per project (a SessionStart hook re-enables it each session). Skip code you don't want tracked with a `.defossilizeignore` (gitignore-style) or an inline `# defossilize: ignore` marker. Turn it off with `/defossilize:guard off`.
 
 ## Theory roots
 
@@ -66,15 +81,15 @@ Peirce's meaning triangle (Object / Sign / Interpretant) mapped to software heal
 
 ## Status
 
-v0.1.1: five lifecycle commands (`preserve`, `thaw`, `excavate`, `revive`, `curate`) plus `/defossilize:continue` for resuming a paused run across sessions. See the design doc and implementation plan in [`docs/`](docs/) (dated 2026-07-03).
+v0.2.0: seven lifecycle commands (`preserve`, `thaw`, `excavate`, `revive`, `curate`, `catalog`, `continue`) plus `guard` (understanding-watch) and `using-defossilize` (router). See the design docs in [`docs/`](docs/).
 
 ## Releases
 
 Releases are cut by pushing a semver tag. Pushing `v0.x.0` triggers the [`Release` workflow](.github/workflows/release.yml), which drafts a GitHub Release with auto-generated notes (PR/commit summary since the previous tag) and GitHub's built-in source archive assets.
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 The release body notes any mismatch between the tag and the version in [`plugin.json`](.claude-plugin/plugin.json). Keep them in sync.
