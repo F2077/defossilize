@@ -725,7 +725,7 @@ section {
 
 <!-- left margin rail -->
 <aside class="rail" aria-hidden="true">
-  <span class="rail-mark">defossilize · v0.1.1</span>
+  <span class="rail-mark">defossilize · v0.2.0</span>
   <span class="rail-mark">field monograph</span>
   <span class="rail-mark">MIT</span>
 </aside>
@@ -754,7 +754,7 @@ section {
   <section class="frontispiece">
 
     <div class="copy">
-      <div class="eyebrow">Field Monograph · v0.1.1</div>
+      <div class="eyebrow">Field Monograph · v0.2.0</div>
       <h1 class="title">defossilize<span class="stress">.</span></h1>
       <p class="lede">Turn fossil code back into <em>understanding</em> — while the theory still lives in your head, or after it has gone.</p>
       <p class="byline">A Claude Code plugin <span class="dot">·</span> reduces intent debt &amp; cognitive debt <span class="dot">·</span> MIT</p>
@@ -829,7 +829,7 @@ section {
       <span class="section-num">Plate II</span>
       <h2>The fossilization lifecycle.</h2>
     </div>
-    <p class="section-sub">Five commands, descending from the surface. Read the column top to bottom; each stratum is one command, and the signs it leaves behind for the next digger.</p>
+    <p class="section-sub">Five lifecycle commands, descending from the surface. Read the column top to bottom; each stratum is one command, and the signs it leaves behind for the next digger.</p>
 
     <div class="column-wrap">
       <div class="depth-axis">
@@ -851,16 +851,14 @@ section {
             <div class="cmd-slash"><code>/defossilize:preserve</code></div>
           </div>
           <div class="cmd-body">
-            <p>Pin a feature’s <span class="em">why</span> in code <em>while you still understand it</em>. Captures intent (the 故 / 理 / 类 of Mozi), the decision path with rejected alternatives, drift-resistant signs, and a self-explanation score.</p>
+            <p>Pin a feature’s <span class="em">why</span> in code <em>while you still understand it</em>. Captures intent (the 故 / 理 / 类 of Mozi), the decision path with rejected alternatives, drift-resistant signs, and a self-explanation checkpoint with an understanding score.</p>
             <p>Run it after <code style="font-family:var(--mono);font-size:14px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">simplify</code>, one feature at a time.</p>
           </div>
           <ul class="cmd-signs">
             <li><span class="label">Signs left</span></li>
-            <li>intent.md</li>
-            <li>decisions.md</li>
-            <li>tour.md</li>
+            <li>specimen.md</li>
+            <li>.progress.md</li>
             <li>why-comments inline</li>
-            <li>characterization tests</li>
           </ul>
         </article>
 
@@ -872,14 +870,14 @@ section {
             <div class="cmd-slash"><code>/defossilize:thaw</code></div>
           </div>
           <div class="cmd-body">
-            <p>Rebuild your grasp of a feature you wrote but can no longer read. Loads the signs <span class="em">preserve</span> left, audits them for drift, gives a one-screen orientation, then walks you through a Socratic rebuild and scores what holds.</p>
+            <p>Rebuild your grasp of a feature you wrote but can no longer read. Loads the signs <span class="em">preserve</span> left, orients you in one screen, then rebuilds the theory via retelling or deconstruction and scores what holds.</p>
             <p>Ephemeral by design — nothing persisted.</p>
           </div>
           <ul class="cmd-signs">
             <li><span class="label">Signs left</span></li>
             <li>session-scoped</li>
             <li>orientation screen</li>
-            <li>self-explanation score</li>
+            <li>understanding score</li>
           </ul>
         </article>
 
@@ -898,7 +896,7 @@ section {
             <li><span class="label">Signs left</span></li>
             <li>map.md</li>
             <li>hotspot ranking</li>
-            <li>_progress.md</li>
+            <li>.progress.md</li>
           </ul>
         </article>
 
@@ -915,7 +913,7 @@ section {
           </div>
           <ul class="cmd-signs">
             <li><span class="label">Signs left</span></li>
-            <li>understanding.md</li>
+            <li>specimen.md</li>
             <li>provenance=revive</li>
             <li>unknown markers</li>
           </ul>
@@ -929,13 +927,13 @@ section {
             <div class="cmd-slash"><code>/defossilize:curate</code></div>
           </div>
           <div class="cmd-body">
-            <p>Check whether comments, docs, and decision records still match the code, and fix what’s drifted. Classifies each mismatch — drift, stale reference, suspected bug, out-of-scope, reconstruction-was-wrong.</p>
+            <p>Check whether comments, docs, and decision records still match the code, and fix what’s drifted. Classifies each mismatch — behavioral drift, invariant violated, stale reference, out-of-scope, reconstruction-was-wrong.</p>
             <p>Only fixes drift and stale references, after you confirm. Bugs are flagged; revive-origin contradictions go back to <span class="em">revive</span>.</p>
           </div>
           <ul class="cmd-signs">
             <li><span class="label">Signs left</span></li>
             <li>mismatch classification</li>
-            <li>confirmation log</li>
+            <li>curate-report on demand</li>
           </ul>
         </article>
 
@@ -943,7 +941,7 @@ section {
     </div>
 
     <p style="font-family:var(--serif-text);font-style:italic;color:var(--ink-soft);font-size:17px;margin-top:24px;padding-left:90px;max-width:62ch;">
-      Signs live in the target project at <code style="font-family:var(--mono);font-size:14px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">docs/defossilize/&lt;unit&gt;/</code>. Two sign types stay in place — <em>why-comments inline in code</em> and <em>characterization tests in the project test dir</em> — because their location <em>is</em> the drift-resistance. No vector DB, no parallel store.
+      Signs live in the target project at <code style="font-family:var(--mono);font-size:14px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">docs/defossilize/&lt;area&gt;/&lt;unit&gt;/</code>. One sign type stays in place — <em>why-comments inline in code</em>, because its location <em>is</em> the drift-resistance. Three tools sit beside the column: <em>catalog</em> (a manual checkpoint), <em>guard</em> (an opt-in watch that captures understanding while you code), and <em>using-defossilize</em> (a router that picks the command for you). No vector DB, no parallel store.
     </p>
   </section>
 
@@ -1014,7 +1012,7 @@ section {
       <span class="section-num">Plate IV</span>
       <h2>To begin a dig.</h2>
     </div>
-    <p class="section-sub">Install from the <code style="font-family:var(--mono);font-size:15px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">f2077</code> marketplace on GitHub. Two commands; then any of the five are available as <code style="font-family:var(--mono);font-size:15px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">/defossilize:&lt;command&gt;</code>.</p>
+    <p class="section-sub">Install from the <code style="font-family:var(--mono);font-size:15px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">f2077</code> marketplace on GitHub. Two commands; then any of the nine are available as <code style="font-family:var(--mono);font-size:15px;background:var(--bone-deep);padding:1px 5px;border:1px solid var(--ash)">/defossilize:&lt;command&gt;</code>.</p>
 
     <figure class="install-plate">
       <div class="install-bar">
@@ -1027,18 +1025,20 @@ section {
 
 <span class="prompt">▸</span> <span class="cmd-text">/plugin install defossilize@f2077</span>
 <span class="comment"># installs defossilize from that marketplace</span>
-<span class="out">  ✓ installed · 5 lifecycle commands + /continue</span>
+<span class="out">  ✓ installed · 7 lifecycle commands + guard + using-defossilize</span>
 
 <span class="prompt">▸</span> <span class="cmd-text">/defossilize:preserve</span>      <span class="comment"># pin the why, while it’s fresh</span>
 <span class="prompt">▸</span> <span class="cmd-text">/defossilize:excavate</span>      <span class="comment"># map a system you inherited</span>
 <span class="prompt">▸</span> <span class="cmd-text">/defossilize:revive</span>        <span class="comment"># bring one hotspot back</span>
 <span class="prompt">▸</span> <span class="cmd-text">/defossilize:thaw</span>          <span class="comment"># rebuild a theory you forgot</span>
 <span class="prompt">▸</span> <span class="cmd-text">/defossilize:curate</span>        <span class="comment"># reconcile signs with code</span>
-<span class="prompt">▸</span> <span class="cmd-text">/defossilize:continue</span>      <span class="comment"># see in-flight work, pick up</span></pre>
+<span class="prompt">▸</span> <span class="cmd-text">/defossilize:continue</span>      <span class="comment"># see in-flight work, pick up</span>
+<span class="prompt">▸</span> <span class="cmd-text">/defossilize:catalog</span>       <span class="comment"># save a manual checkpoint</span>
+<span class="prompt">▸</span> <span class="cmd-text">/defossilize:guard on</span>       <span class="comment"># watch for code about to fossilize</span></pre>
     </figure>
 
     <div class="install-notes">
-      <p><strong style="color:var(--oxblood);font-weight:600">Resuming across sessions.</strong> <code>preserve</code>, <code>excavate</code>, and <code>revive</code> write a small <code>docs/defossilize/&lt;unit&gt;/_progress.md</code> as they work, so a paused run can pick up in a later session. Run <code>/defossilize:continue</code> to see everything in flight and where each one stopped. (<code>thaw</code> is session-scoped by design; <code>curate</code> is safely re-runnable from scratch.)</p>
+      <p><strong style="color:var(--oxblood);font-weight:600">Resuming across sessions.</strong> <code>preserve</code>, <code>excavate</code>, and <code>revive</code> write a small <code>docs/defossilize/&lt;area&gt;/&lt;unit&gt;/.progress.md</code> as they work, so a paused run can pick up in a later session. Run <code>/defossilize:continue</code> to see everything in flight and where each one stopped, or pause on purpose with <code>/defossilize:catalog</code>. (<code>thaw</code> is session-scoped by design; <code>curate</code> is safely re-runnable from scratch.)</p>
     </div>
   </section>
 
@@ -1063,7 +1063,7 @@ section {
     </div>
 
     <div class="colophon-imprint">
-      <span>© F2077 · MIT · v0.1.1 · a community marketplace plugin</span>
+      <span>© F2077 · MIT · v0.2.0 · a community marketplace plugin</span>
       <svg class="ammonite-glyph" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <g transform="translate(50 50)" fill="none" stroke="#5C1A1B" stroke-width="2.2">
           <circle cx="0" cy="0" r="40"/>
