@@ -1,0 +1,17 @@
+{
+  "description": "defossilize understanding-watch (guard): injects the watch rule at session start when enabled (opt-in, default off)",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PLUGIN_ROOT/hooks/guard-session-start.sh\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

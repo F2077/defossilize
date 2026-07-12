@@ -1,7 +1,7 @@
 {
   "name": "defossilize",
-  "version": "0.1.1",
-  "description": "Turn fossil code back into understanding. Reduces intent debt and cognitive debt across the fossilization spectrum (preserve, thaw, excavate, revive, curate).",
+  "version": "0.2.0",
+  "description": "Turn fossil code back into understanding. Reduces intent debt and cognitive debt across the fossilization spectrum (preserve, thaw, excavate, revive, curate, catalog, continue).",
   "author": {"name": "F2077"},
   "homepage": "https://f2077.github.io/defossilize/",
   "repository": "https://github.com/F2077/defossilize",
